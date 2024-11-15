@@ -19,6 +19,10 @@ namespace Hazel {
 		virtual void Clear() = 0;
 
 		virtual void DrawIndexed(const Ref<VertexArray>& VertexArray) = 0;
+
+		virtual void Draw(const Ref<VertexBuffer>& vertexBuffer) = 0;
+
+		virtual float GetTime() = 0;
 	
 		inline static API GetAPI() { return s_API; }
 	private:

@@ -28,4 +28,12 @@ namespace Hazel {
 		RenderCommand::DrawIndexed(vertexArray);
 	}
 
+	void Renderer::Submit(const Ref<Shader>& shader, const Ref<VertexBuffer>& vertexBuffer) {
+		shader->Bind();
+
+		vertexBuffer->Bind();
+
+		RenderCommand::Draw(vertexBuffer);
+	}
+
 }

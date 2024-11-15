@@ -13,6 +13,9 @@ namespace Hazel {
 
 		virtual void DrawIndexed(const Ref<VertexArray>& VertexArray) override;
 
+		virtual void Draw(const Ref<VertexBuffer>& vertexBuffer) override;
+
+		virtual float GetTime() override;
 	};
 
 }

@@ -2,11 +2,13 @@
 #include "OpenGLRendererAPI.h"
 
 #include <glad/glad.h>
+#include "GLFW/glfw3.h"
 
 namespace Hazel {
 
 	void OpenGLRendererAPI::Init() {
 		glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	}
@@ -22,6 +24,16 @@ namespace Hazel {
 
 	void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& VertexArray) {
 		glDrawElements(GL_TRIANGLES, VertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLRendererAPI::Draw(const Ref<VertexBuffer>& vertexBuffer) {
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+	}
+
+	float OpenGLRendererAPI::GetTime() {
+
+		return (float)glfwGetTime();
+
 	}
 }
 
