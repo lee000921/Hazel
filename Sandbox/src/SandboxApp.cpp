@@ -16,66 +16,61 @@ public:
 				 glm::vec3(0.0f, 1.0f, 0.0f),
 				 45.0f, (float)width/height) {	
 
-		m_VertexArray = Hazel::VertexArray::Create();
-
-		/*float vertices[] = {
-			-0.5f, -0.5f, 0.0f,
-			-0.5f,  0.5f, 0.0f,
-			 0.5f,  0.5f, 0.0f,
-			 0.5f, -0.5f, 0.0f
-		};*/
-
 		float vertices[] = {
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
 
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
 
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
 
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
 
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 		};
+
+		m_CubeVertexArray = Hazel::VertexArray::Create();
+
+		
 		// m_VertexArray
-		m_VertexBuffer = Hazel::VertexBuffer::Create(vertices, sizeof(vertices));
-		m_VertexBuffer->SetLayout({
+		Hazel::Ref<Hazel::VertexBuffer> cubeVB = Hazel::VertexBuffer::Create(vertices, sizeof(vertices));
+		cubeVB->SetLayout({
 			{ Hazel::ShaderDataType::Float3, "a_Position"},
 			{ Hazel::ShaderDataType::Float2, "a_Texcoord"}
 		});
 
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		m_CubeVertexArray->AddVertexBuffer(cubeVB);
 
 
 		/*unsigned int indices[] = {
@@ -84,6 +79,15 @@ public:
 		};
 		Hazel::Ref<Hazel::IndexBuffer> IB = Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(unsigned int));
 		m_VertexArray->SetIndexBuffer(IB);*/
+
+		m_LightVertexArray = Hazel::VertexArray::Create();
+		Hazel::Ref<Hazel::VertexBuffer> lightVB = Hazel::VertexBuffer::Create(vertices, sizeof(vertices));
+		lightVB->SetLayout({
+			{ Hazel::ShaderDataType::Float3, "a_Position"},
+			{ Hazel::ShaderDataType::Float2, "a_Texcoord"}
+		});
+
+		m_LightVertexArray->AddVertexBuffer(lightVB);
 
 
 		std::string vertexSrc = R"(
@@ -104,18 +108,33 @@ public:
 		std::string fragmentSrc = R"(
 			#version 330 core
 			
-			layout(location = 0) out vec4 color;		
+			layout(location = 0) out vec4 color;	
+			
+			uniform vec3 objectColor;
+			uniform vec3 lightColor;	
 
 			void main()
 			{
-				color = vec4(0.8f, 0.2f, 0.3f, 1.0f);
+				color = vec4(lightColor * objectColor, 1.0f);
 			}
 		)";
 
-		/*m_Shader = Hazel::Shader::Create(vertexSrc, fragmentSrc);*/
+		std::string lightFragmentSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 color;	
+			
+			void main()
+			{
+				color = vec4(1.0f);
+			}
+		)";
 
-		m_Texture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
-		m_Texture->Bind();
+		m_CubeShader = Hazel::Shader::Create(vertexSrc, fragmentSrc);
+		m_LightShader = Hazel::Shader::Create(vertexSrc, lightFragmentSrc);
+
+		/*m_Texture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
+		m_Texture->Bind();*/
 
 		
 
@@ -182,7 +201,7 @@ public:
 			}
 		)";
 
-		m_Shader = Hazel::Shader::Create(textureShaderVertexSrc, textureShaderFragmentSrc);
+
 		lastX = width / 2;
 		lastY = height / 2;
 }
@@ -206,7 +225,6 @@ public:
 			cameraPos += m_CameraMoveSpeed * ts * glm::normalize(glm::cross(cameraDirection, cameraUp));
 		}
 
-		 // if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT)) {
 		auto [xPos, yPos] = Hazel::Input::GetMousePosition();
 		if (firstMouse) {
 			lastX = xPos;
@@ -222,99 +240,25 @@ public:
 
 		m_Camera.UpdateRotation(xOffset, yOffset);
 		
-		 // }
+		m_CubeShader->Bind();
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+
+		glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.2f));
+
+		Hazel::Renderer::BeginScene(m_Camera);
 
 		Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Hazel::RenderCommand::Clear(); 
 
-		// m_VertexBuffer->Bind();
+		Hazel::Renderer::Submit(m_CubeShader, m_CubeVertexArray);
+		Hazel::Renderer::Submit(m_LightShader, m_LightVertexArray, model);
+
+		Hazel::Renderer::EndScene();
 		
-		m_VertexArray->Bind();
-		m_Shader->Bind();
-
-		float time = Hazel::RenderCommand::GetTime();
-
-		float radius = 10.0f;
-		float camX = sin(time) * radius;
-		float camZ = cos(time) * radius;
-
-		glm::mat4 view = m_Camera.GetViewMatrix();
-		
-		glm::mat4 projection = m_Camera.GetProjectionMatrix();
-		
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformMat4("u_Projection", projection);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformMat4("u_View", view);
-		// std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformMat4("u_Model", model);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformInt("u_Texture", 0);
-
-		glm::vec3 cubePositions[] = {
-			glm::vec3(0.0f,  0.0f,  0.0f),
-			glm::vec3(2.0f,  5.0f, -15.0f),
-			glm::vec3(-1.5f, -2.2f, -2.5f),
-			glm::vec3(-3.8f, -2.0f, -12.3f),
-			glm::vec3(2.4f, -0.4f, -3.5f),
-			glm::vec3(-1.7f,  3.0f, -7.5f),
-			glm::vec3(1.3f, -2.0f, -2.5f),
-			glm::vec3(1.5f,  2.0f, -2.5f),
-			glm::vec3(1.5f,  0.2f, -1.5f),
-			glm::vec3(-1.3f,  1.0f, -1.5f)
-		};
-
-		for (unsigned int i = 0; i < 10; i++) {
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, cubePositions[i]);
-			float angle = 20.0f * i;
-			if (i % 3 == 0) {
-				angle = Hazel::RenderCommand::GetTime() * 55.0f;
-			}
-			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-			std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_Shader)->UploadUniformMat4("u_Model", model);
-
-			Hazel::Renderer::Submit(m_Shader, m_VertexBuffer);
-		}
-
-		
-		// Hazel::Renderer::Submit(m_Shader, m_VertexArray);
-		/*m_Camera.SetPosition(m_CameraPosition);
-		m_Camera.SetRotation(m_CameraRotation);
-
-		Hazel::Renderer::BeginScene(m_Camera);*/
-
-		/*glm::mat4 view = m_Camera.GetViewMatrix();
-
-		glm::mat4 projection = m_Camera.GetProjectionMatrix();
-
-		static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));*/
-
-		// Thought: Why not create a material object and let shader choose which material it load?
-		// 从某个方面来说 material应该是对于要渲染的物体来说的 
-		// 所以这里的方式是渲染物体时需要几何信息 + 材质，材质会绑定Shader
-		// Hazel::Material* material = new Hazel::Material(m_FlatColorShader); 
-
-		//std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->Bind();
-		//std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformFloat3("u_Color", m_SquareColor);
-
-		//std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformMat4("u_Projection", projection);
-		//std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_FlatColorShader)->UploadUniformMat4("u_View", view);
-
-		//for (int y = 0; y < 20; y++) {
-		//	for (int x = 0; x < 20; x++) {
-		//		glm::vec3 pos(x * 0.11f, y * 0.11f, 0.0f);
-		//		glm::mat4 transform = glm::translate(glm::mat4(1.0f), pos) * scale;
-		//		Hazel::Renderer::Submit(m_FlatColorShader, m_SquareVA, transform);
-		//	}
-		//}
-
-		//m_Texture->Bind();
-		//Hazel::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
-		//m_ChernoLogoTexture->Bind();
-		//Hazel::Renderer::Submit(m_TextureShader, m_SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
-
-		//// Triangle
-		//// Hazel::Renderer::Submit(m_Shader, m_VertexArray);
-
-		//Hazel::Renderer::EndScene();
 	}
 
 	virtual void OnImGuiRender() override{
@@ -343,9 +287,9 @@ public:
 		return false;
 	}
 private:
-	Hazel::Ref<Hazel::Shader> m_Shader;
-	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
-	Hazel::Ref<Hazel::VertexBuffer> m_VertexBuffer;
+	Hazel::Ref<Hazel::Shader> m_CubeShader, m_LightShader;
+	Hazel::Ref<Hazel::VertexArray> m_CubeVertexArray;
+	Hazel::Ref<Hazel::VertexArray> m_LightVertexArray;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_ChernoLogoTexture;
 	
