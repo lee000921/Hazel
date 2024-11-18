@@ -18,17 +18,9 @@ namespace Hazel {
 		~Camera() {};
 
 		inline glm::mat4 GetViewMatrix() const {
-			/*glm::mat4 view;
+			glm::mat4 view;
 			view = glm::lookAt(m_Position, m_Position + m_Direction, m_Up);
-			return view;*/
-
-			float radius = 10.0f;
-			float time = RenderCommand::GetTime();
-			float camX = sin(time) * radius;
-			float camZ = cos(time) * radius;
-
-			glm::mat3 view;
-			view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+			
 			return view;
 		}
 
@@ -39,11 +31,41 @@ namespace Hazel {
 			return projection;
 		}
 
+		inline glm::vec3& GetPosition() {
+			return m_Position;
+		}
+
+		inline glm::vec3& GetDirection() {
+			return m_Direction;
+		}
+
+		inline glm::vec3& GetUp() {
+			return m_Up;
+		}
+
+		inline float& GetYaw() {
+			return m_Yaw;
+		}
+
+		inline float& GetPitch() {
+			return m_Pitch;
+		}
+
+		inline float& GetFov() {
+			return m_FOV;
+		}
+
+		void UpdateRotation(float xOffset, float yOffset);
+
+		void UpdateFov(float xOffset, float yOffset);
+
 	private:
 		glm::vec3 m_Position;
 		glm::vec3 m_Direction;
 		glm::vec3 m_Up;
 		float m_FOV;
 		float m_Ratio;
+		float m_Yaw = -90.0f;
+		float m_Pitch = 0.0f;
 	};
 }
