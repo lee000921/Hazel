@@ -113,6 +113,24 @@ public:
 
 		std::string fragmentSrc = R"(
 			#version 330 core
+
+			struct Material {
+				vec3 ambient;
+				vec3 diffuse;
+				vec3 specular;
+				float shininess;
+			};
+
+			struct Light {
+				vec3 position;
+
+				vec3 ambient;
+				vec3 diffuse;
+				vec3 specular;
+			};
+
+			uniform Light light;
+			uniform Material material;
 			
 			layout(location = 0) out vec4 color;	
 
@@ -121,27 +139,26 @@ public:
 			
 			uniform vec3 objectColor;
 			uniform vec3 lightColor;	
-			uniform vec3 lightPos;
 			uniform vec3 viewPos;
 
 			void main()
 			{	
-				float ambientStrength = 0.1f;
-				vec3 ambient = ambientStrength * lightColor;
-				
+				// 环境光
+				vec3 ambient = light.ambient * material.ambient;
+
+				// 漫反射
 				vec3 norm = normalize(v_Normal);
-				vec3 lightDir = normalize(lightPos - v_Pos);
+				vec3 lightDir = normalize(light.position - v_Pos);
 				float diff = max(dot(norm, lightDir), 0.0f);
-				vec3 diffuse = diff * lightColor;
-				
-				float specularStrength = 0.5;
+				vec3 diffuse = light.diffuse * (diff * material.diffuse);
+
+				// 镜面光
 				vec3 viewDir = normalize(viewPos - v_Pos);
 				vec3 reflectDir = reflect(-lightDir, norm);
-				float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-				vec3 specular = specularStrength * spec * lightColor;
-					
-				vec3 result = (ambient + diffuse + specular) * objectColor;
-				
+				float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
+				vec3 specular = light.specular * (spec * material.specular);
+
+				vec3 result = ambient + diffuse + specular;
 				color = vec4(result, 1.0f);
 			}
 		)";
@@ -151,9 +168,11 @@ public:
 			
 			layout(location = 0) out vec4 color;	
 			
+			uniform vec3 u_Color;
+			
 			void main()
 			{
-				color = vec4(1.0f);
+				color = vec4(u_Color, 1.0f);
 			}
 		)";
 
@@ -270,13 +289,32 @@ public:
 
 		float time = Hazel::RenderCommand::GetTime();
 		glm::vec3 lightPos(1.2f * glm::sin(time), 1.0f * glm::cos(time), 2.0f);
+		glm::vec3 lightColor;
+		lightColor.x = sin(time * 2.0f);
+		lightColor.y = sin(time * 0.7f);
+		lightColor.z = sin(time * 1.3f);
+
+		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
 
 		m_CubeShader->Bind();
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("lightPos", lightPos);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("viewPos", m_Camera.GetPosition());
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", lightPos);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
+		m_CubeShader->Unbind();
+
+
+		m_LightShader->Bind();
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_LightShader)->UploadUniformFloat3("u_Color", lightColor);
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -286,7 +324,7 @@ public:
 
 		Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Hazel::RenderCommand::Clear(); 
-
+			
 		Hazel::Renderer::Submit(m_CubeShader, m_CubeVertexArray);
 		Hazel::Renderer::Submit(m_LightShader, m_LightVertexArray, model);
 
