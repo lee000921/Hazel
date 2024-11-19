@@ -15,51 +15,51 @@ public:
 			     glm::vec3(0.0f, 0.0f, -1.0f), 
 				 glm::vec3(0.0f, 1.0f, 0.0f),
 				 45.0f, (float)width/height) {	
-
+		
 		float vertices[] = {
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+			// positions          // normals           // texture coords
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
 
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,
 
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+			-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
+			 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+			 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+			-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+			-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+			 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+			 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+			-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+			-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
 		};
-
 		m_CubeVertexArray = Hazel::VertexArray::Create();
 
 		
@@ -67,7 +67,8 @@ public:
 		Hazel::Ref<Hazel::VertexBuffer> cubeVB = Hazel::VertexBuffer::Create(vertices, sizeof(vertices));
 		cubeVB->SetLayout({
 			{ Hazel::ShaderDataType::Float3, "a_Position"},
-			{ Hazel::ShaderDataType::Float3, "a_Normal"}
+			{ Hazel::ShaderDataType::Float3, "a_Normal"},
+			{ Hazel::ShaderDataType::Float2, "a_TexCoord"}
 		});
 
 		m_CubeVertexArray->AddVertexBuffer(cubeVB);
@@ -84,7 +85,8 @@ public:
 		Hazel::Ref<Hazel::VertexBuffer> lightVB = Hazel::VertexBuffer::Create(vertices, sizeof(vertices));
 		lightVB->SetLayout({
 			{ Hazel::ShaderDataType::Float3, "a_Position"},
-			{ Hazel::ShaderDataType::Float3, "a_Normal"}
+			{ Hazel::ShaderDataType::Float3, "a_Normal"},
+			{ Hazel::ShaderDataType::Float2, "a_TexCoord"}
 		});
 
 		m_LightVertexArray->AddVertexBuffer(lightVB);
@@ -95,9 +97,11 @@ public:
 			
 			layout(location = 0) in vec3 a_Position;		
 			layout(location = 1) in vec3 a_Normal;
+			layout(location = 2) in vec2 a_TexCoord;
 
 			out vec3 v_Normal;
 			out vec3 v_Pos;
+			out vec2 v_TexCoord;
 			
 			uniform mat4 u_Projection;
 			uniform mat4 u_View;
@@ -108,6 +112,7 @@ public:
 				gl_Position = u_Projection * u_View * u_Model * vec4(a_Position, 1.0);
 				v_Normal = mat3(transpose(inverse(u_Model))) * a_Normal;
 				v_Pos = vec3(u_Model * vec4(a_Position, 1.0));
+				v_TexCoord = a_TexCoord;
 			}
 		)";
 
@@ -115,9 +120,8 @@ public:
 			#version 330 core
 
 			struct Material {
-				vec3 ambient;
-				vec3 diffuse;
-				vec3 specular;
+				sampler2D diffuse;
+				sampler2D specular;
 				float shininess;
 			};
 
@@ -136,6 +140,7 @@ public:
 
 			in vec3 v_Normal;
 			in vec3 v_Pos;
+			in vec2 v_TexCoord;
 			
 			uniform vec3 objectColor;
 			uniform vec3 lightColor;	
@@ -144,19 +149,19 @@ public:
 			void main()
 			{	
 				// 环境光
-				vec3 ambient = light.ambient * material.ambient;
+				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
 
 				// 漫反射
 				vec3 norm = normalize(v_Normal);
 				vec3 lightDir = normalize(light.position - v_Pos);
 				float diff = max(dot(norm, lightDir), 0.0f);
-				vec3 diffuse = light.diffuse * (diff * material.diffuse);
+				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
 
 				// 镜面光
 				vec3 viewDir = normalize(viewPos - v_Pos);
 				vec3 reflectDir = reflect(-lightDir, norm);
 				float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-				vec3 specular = light.specular * (spec * material.specular);
+				vec3 specular = light.specular * spec * vec3(texture(material.specular, v_TexCoord));
 
 				vec3 result = ambient + diffuse + specular;
 				color = vec4(result, 1.0f);
@@ -181,6 +186,12 @@ public:
 
 		/*m_Texture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
 		m_Texture->Bind();*/
+
+		m_CubeTexture = Hazel::Texture2D::Create("assets/textures/container2.png");
+		m_CubeTexture->Bind();
+
+		m_CubeSpecularTexture = Hazel::Texture2D::Create("assets/textures/container2_specular.png");
+		m_CubeSpecularTexture->Bind(1);
 
 		
 
@@ -288,11 +299,8 @@ public:
 		
 
 		float time = Hazel::RenderCommand::GetTime();
-		glm::vec3 lightPos(1.2f * glm::sin(time), 1.0f * glm::cos(time), 2.0f);
-		glm::vec3 lightColor;
-		lightColor.x = sin(time * 2.0f);
-		lightColor.y = sin(time * 0.7f);
-		lightColor.z = sin(time * 1.3f);
+		glm::vec3 lightPos(1.2f, 1.0f, 2.0f);
+		glm::vec3 lightColor(1.0f);
 
 		glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
 		glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
@@ -301,16 +309,14 @@ public:
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("viewPos", m_Camera.GetPosition());
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("material.specular", glm::vec3(0.5f, 0.5f, 0.5f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.diffuse", 0);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.specular", 1);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", lightPos);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
-		m_CubeShader->Unbind();
 
 
 		m_LightShader->Bind();
@@ -363,6 +369,8 @@ private:
 	Hazel::Ref<Hazel::VertexArray> m_LightVertexArray;
 
 	Hazel::Ref<Hazel::Texture2D> m_Texture, m_ChernoLogoTexture;
+	Hazel::Ref<Hazel::Texture2D> m_CubeTexture;
+	Hazel::Ref<Hazel::Texture2D> m_CubeSpecularTexture;
 	
 	// Hazel::OrthographicCamera m_Camera;
 	Hazel::Camera m_Camera;
