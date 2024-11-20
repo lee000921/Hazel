@@ -126,13 +126,16 @@ public:
 			};
 
 			struct Light {
-				// vec3 position;
-				
-				vec3 direction;				
+				vec3 position;
+				// vec3 direction;				
 
 				vec3 ambient;
 				vec3 diffuse;
 				vec3 specular;
+				
+				float constant;
+				float linear;
+				float quadratic;
 			};
 
 			uniform Light light;
@@ -150,12 +153,15 @@ public:
 
 			void main()
 			{	
+				float distance = length(light.position - v_Pos);
+				float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 				// 环境光
 				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
 
 				// 漫反射
 				vec3 norm = normalize(v_Normal);
-				vec3 lightDir = normalize(-light.direction);
+				// vec3 lightDir = normalize(-light.direction);
+				vec3 lightDir = normalize(light.position - v_Pos);
 				float diff = max(dot(norm, lightDir), 0.0f);
 				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
 
@@ -165,7 +171,7 @@ public:
 				float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
 				vec3 specular = light.specular * spec * vec3(texture(material.specular, v_TexCoord));
 
-				vec3 result = ambient + diffuse + specular;
+				vec3 result = (ambient + diffuse + specular) * attenuation;
 				color = vec4(result, 1.0f);
 			}
 		)";
@@ -315,10 +321,13 @@ public:
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.specular", 1);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", lightPos);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.constant", 1.0f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.linear", 0.09f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.quadratic", 0.032f);
 
 
 		m_LightShader->Bind();
