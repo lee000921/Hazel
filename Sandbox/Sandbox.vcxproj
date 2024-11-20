@@ -144,6 +144,11 @@
     <Image Include="assets\textures\container2.png" />
     <Image Include="assets\textures\container2_specular.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shaders\fragment.fs" />
+    <None Include="assets\shaders\lightFragment.fs" />
+    <None Include="assets\shaders\vertex.vs" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

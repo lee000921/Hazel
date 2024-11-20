@@ -6,65 +6,67 @@
 #include <glm/gtc/type_ptr.hpp>
 
 namespace Hazel {
+	
+	std::string ReadSourceCodeFromFile(const std::string& path) {
+		std::string code;
+		std::ifstream file;
+		// 保证ifstream对象可以抛出异常：
+		file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+		try
+		{
+			// 打开文件
+			file.open(path);
+			std::stringstream stream;
+			// 读取文件的缓冲内容到数据流中
+			stream << file.rdbuf();
+			// 关闭文件处理器
+			file.close();
+			// 转换数据流到string
+			code = stream.str();
+		}
+		catch (std::ifstream::failure e) {
+			HZ_CORE_ERROR("file {0} not successfully read", path);
+		}
+		return code;
+	}
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc) {
+	unsigned int CompileShader(const std::string& srcCode, unsigned int type) {
+		unsigned int shader = glCreateShader(type);
+
+		const char* source = srcCode.c_str();
+		glShaderSource(shader, 1, &source, 0);
+
+		glCompileShader(shader);
+
+		GLint isCompiled = 0;
+		glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
+		if (isCompiled == GL_FALSE)
+		{
+			GLint maxLength = 0;
+			glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
+			// The maxLength includes the NULL character
+			std::vector<GLchar> infoLog(maxLength);
+			glGetShaderInfoLog(shader, maxLength, &maxLength, &infoLog[0]);
+			// We don't need the shader anymore.
+			glDeleteShader(shader);
+			HZ_CORE_ERROR("{0}", infoLog.data());
+			std::string errMessage = (type == GL_VERTEX_SHADER) ? "Vertex shader compilation failure!"
+																: "Fragment shader compilation failure!";
+			HZ_CORE_ASSERT(false, errMessage);
+			return 0;
+		}
+		return shader;
+	}
+
+	OpenGLShader::OpenGLShader(const std::string& vertexPath, const std::string& fragmentPath) {
+
+		std::string vertexSrc = ReadSourceCodeFromFile(vertexPath);
+		std::string fragmentSrc = ReadSourceCodeFromFile(fragmentPath);
 
 		// Create an empty vertex shader handle
-		GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+		GLuint vertexShader = CompileShader(vertexSrc, GL_VERTEX_SHADER);
+		GLuint fragmentShader = CompileShader(fragmentSrc, GL_FRAGMENT_SHADER);
 
-		// Send the vertex shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		const GLchar* source = vertexSrc.c_str();
-		glShaderSource(vertexShader, 1, &source, 0);
-
-		// Compile the vertex shader
-		glCompileShader(vertexShader);
-		GLint isCompiled = 0;
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &maxLength);
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(vertexShader, maxLength, &maxLength, &infoLog[0]);
-			// We don't need the shader anymore.
-			glDeleteShader(vertexShader);
-			HZ_CORE_ERROR("{0}", infoLog.data());
-			HZ_CORE_ASSERT(false, "Vertex shader compilation failure!");
-			return;
-		}
-
-		// Create an empty fragment shader handle
-		GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-		// Send the fragment shader source code to GL
-		// Note that std::string's .c_str is NULL character terminated.
-		source = fragmentSrc.c_str();
-		glShaderSource(fragmentShader, 1, &source, 0);
-
-		// Compile the fragment shader
-		glCompileShader(fragmentShader);
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &isCompiled);
-		if (isCompiled == GL_FALSE)
-		{
-			GLint maxLength = 0;
-			glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &maxLength);
-			// The maxLength includes the NULL character
-			std::vector<GLchar> infoLog(maxLength);
-			glGetShaderInfoLog(fragmentShader, maxLength, &maxLength, &infoLog[0]);
-			// We don't need the shader anymore.
-
-			glDeleteShader(fragmentShader);
-			// Either of them. Don't leak shaders.
-			glDeleteShader(vertexShader);
-			HZ_CORE_ERROR("{0}", infoLog.data());
-			HZ_CORE_ASSERT(false, "Fragment shader compilation failure!");
-			return;
-		}
-		// Vertex and fragment shaders are successfully compiled.
-		// Now time to link them together into a program.
-		// Get a program object.
 		m_RendererID = glCreateProgram();
 		GLuint program = m_RendererID;
 
