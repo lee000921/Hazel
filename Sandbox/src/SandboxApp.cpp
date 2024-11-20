@@ -127,7 +127,9 @@ public:
 
 			struct Light {
 				vec3 position;
-				// vec3 direction;				
+				vec3 direction;				
+				float cutOff;
+				float outerCutOff;
 
 				vec3 ambient;
 				vec3 diffuse;
@@ -153,15 +155,20 @@ public:
 
 			void main()
 			{	
-				float distance = length(light.position - v_Pos);
-				float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 				// 环境光
 				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
 
+				vec3 lightDir = normalize(light.position - v_Pos);
+				float theta = dot(lightDir, normalize(-light.direction));
+				float epsilon = light.cutOff - light.outerCutOff;
+				float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+		
+				float distance = length(light.position - v_Pos);
+				float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+				
 				// 漫反射
 				vec3 norm = normalize(v_Normal);
-				// vec3 lightDir = normalize(-light.direction);
-				vec3 lightDir = normalize(light.position - v_Pos);
+				
 				float diff = max(dot(norm, lightDir), 0.0f);
 				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
 
@@ -171,6 +178,9 @@ public:
 				float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
 				vec3 specular = light.specular * spec * vec3(texture(material.specular, v_TexCoord));
 
+				diffuse *= intensity;
+				specular *= intensity;
+	
 				vec3 result = (ambient + diffuse + specular) * attenuation;
 				color = vec4(result, 1.0f);
 			}
@@ -321,7 +331,10 @@ public:
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.specular", 1);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", lightPos);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", m_Camera.GetPosition());
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.direction", m_Camera.GetDirection());
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
