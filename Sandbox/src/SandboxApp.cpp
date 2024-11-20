@@ -126,7 +126,9 @@ public:
 			};
 
 			struct Light {
-				vec3 position;
+				// vec3 position;
+				
+				vec3 direction;				
 
 				vec3 ambient;
 				vec3 diffuse;
@@ -153,7 +155,7 @@ public:
 
 				// Âþ·´Éä
 				vec3 norm = normalize(v_Normal);
-				vec3 lightDir = normalize(light.position - v_Pos);
+				vec3 lightDir = normalize(-light.direction);
 				float diff = max(dot(norm, lightDir), 0.0f);
 				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
 
@@ -313,7 +315,7 @@ public:
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.specular", 1);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", lightPos);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
@@ -321,6 +323,19 @@ public:
 
 		m_LightShader->Bind();
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_LightShader)->UploadUniformFloat3("u_Color", lightColor);
+
+		glm::vec3 cubePositions[] = {
+			glm::vec3(0.0f,  0.0f,  0.0f),
+			glm::vec3(2.0f,  5.0f, -15.0f),
+			glm::vec3(-1.5f, -2.2f, -2.5f),
+			glm::vec3(-3.8f, -2.0f, -12.3f),
+			glm::vec3(2.4f, -0.4f, -3.5f),
+			glm::vec3(-1.7f,  3.0f, -7.5f),
+			glm::vec3(1.3f, -2.0f, -2.5f),
+			glm::vec3(1.5f,  2.0f, -2.5f),
+			glm::vec3(1.5f,  0.2f, -1.5f),
+			glm::vec3(-1.3f,  1.0f, -1.5f)
+		};
 
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, lightPos);
@@ -330,9 +345,19 @@ public:
 
 		Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Hazel::RenderCommand::Clear(); 
-			
-		Hazel::Renderer::Submit(m_CubeShader, m_CubeVertexArray);
+		
 		Hazel::Renderer::Submit(m_LightShader, m_LightVertexArray, model);
+
+
+		for (int i = 0; i < 10; i++) {
+			glm::mat4 model(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			float angle = 20.0f * i;
+			model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			Hazel::Renderer::Submit(m_CubeShader, m_CubeVertexArray, model);
+		}
+		
+		
 
 		Hazel::Renderer::EndScene();
 		
