@@ -124,23 +124,44 @@ public:
 				sampler2D specular;
 				float shininess;
 			};
-
-			struct Light {
-				vec3 position;
-				vec3 direction;				
-				float cutOff;
-				float outerCutOff;
-
+			
+			struct DirLight {		
+				vec3 direction;
+				
 				vec3 ambient;
 				vec3 diffuse;
 				vec3 specular;
+			};
+			
+			struct PointLight {
+				vec3 position;
 				
 				float constant;
 				float linear;
 				float quadratic;
+
+				vec3 ambient;
+				vec3 diffuse;
+				vec3 specular;
 			};
 
-			uniform Light light;
+			struct SpotLight {
+				vec3 position;
+				vec3 direction;
+				
+				float cutOff;
+				float outerCutOff;
+				
+				vec3 ambient;
+				vec3 diffuse;
+				vec3 specular;
+			};
+
+			#define NR_POINT_LIGHTS 4
+			
+			uniform DirLight dirLight; // 方向光
+			uniform PointLight pointLights[NR_POINT_LIGHTS]; // 点光源
+			uniform SpotLight spotLight; // 聚光
 			uniform Material material;
 			
 			layout(location = 0) out vec4 color;	
@@ -153,36 +174,90 @@ public:
 			uniform vec3 lightColor;	
 			uniform vec3 viewPos;
 
+			vec3 CalDirLight(DirLight light, vec3 normal, vec3 viewDir);
+
+			vec3 CalPointLight(PointLight light, vec3 normal, vec3 vpos, vec3 viewDir);
+
+			vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 vpos, vec3 viewDir);
+			
 			void main()
 			{	
-				// 环境光
-				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
+				// 属性
+				vec3 norm = normalize(v_Normal);
+				vec3 viewDir = normalize(viewPos - v_Pos);
 
-				vec3 lightDir = normalize(light.position - v_Pos);
+				// 定向光
+				vec3 result = CalDirLight(dirLight, norm, viewDir);
+				
+				// 点光源
+				for (int i = 0; i < NR_POINT_LIGHTS; i++) 
+					result += CalPointLight(pointLights[i], norm, v_Pos, viewDir);
+				// 聚光
+				result += CalSpotLight(spotLight, norm, v_Pos, viewDir);
+
+				color = vec4(result, 1.0f);
+			}
+
+			vec3 CalDirLight(DirLight light, vec3 normal, vec3 viewDir) 
+			{
+				
+				vec3 lightDir = normalize(-light.direction);
+				// 漫反射着色
+				float diff = max(dot(normal, lightDir), 0.0f);
+				// 镜面光着色
+				vec3 reflectDir = reflect(-lightDir, normal);
+				float spec = pow(max(dot(viewDir, reflectDir), 0), material.shininess);
+				// 合并结果
+				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
+				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
+				vec3 specular = light.specular  * spec * vec3(texture(material.diffuse, v_TexCoord));
+				return (ambient + diffuse + specular);
+			}
+
+			vec3 CalPointLight(PointLight light, vec3 normal, vec3 vpos, vec3 viewDir) 
+			{
+				
+				vec3 lightDir = normalize(light.position - vpos);
+				// 漫反射着色
+				float diff = max(dot(normal, lightDir), 0.0f);
+				// 镜面光着色
+				vec3 reflectDir = reflect(-lightDir, normal);
+				float spec = pow(max(dot(viewDir, reflectDir), 0), material.shininess);
+				// 合并结果
+				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
+				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
+				vec3 specular = light.specular  * spec * vec3(texture(material.diffuse, v_TexCoord));
+				// 衰减
+				float distance = length(light.position - vpos);
+				float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+				
+				ambient *= attenuation;
+				diffuse *= attenuation;
+				specular *= attenuation;
+
+				return (ambient + diffuse + specular);
+			}
+
+			vec3 CalSpotLight(SpotLight light, vec3 normal, vec3 vpos, vec3 viewDir) {
+				vec3 lightDir = normalize(light.position - vpos);
 				float theta = dot(lightDir, normalize(-light.direction));
 				float epsilon = light.cutOff - light.outerCutOff;
 				float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
-		
-				float distance = length(light.position - v_Pos);
-				float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 				
-				// 漫反射
-				vec3 norm = normalize(v_Normal);
-				
-				float diff = max(dot(norm, lightDir), 0.0f);
+				// 漫反射着色
+				float diff = max(dot(normal, lightDir), 0.0f);
+				// 镜面光着色
+				vec3 reflectDir = reflect(-lightDir, normal);
+				float spec = pow(max(dot(viewDir, reflectDir), 0), material.shininess);
+				// 合并结果
+				vec3 ambient = light.ambient * vec3(texture(material.diffuse, v_TexCoord));
 				vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, v_TexCoord));
-
-				// 镜面光
-				vec3 viewDir = normalize(viewPos - v_Pos);
-				vec3 reflectDir = reflect(-lightDir, norm);
-				float spec = pow(max(dot(viewDir, reflectDir), 0.0f), material.shininess);
-				vec3 specular = light.specular * spec * vec3(texture(material.specular, v_TexCoord));
-
+				vec3 specular = light.specular  * spec * vec3(texture(material.diffuse, v_TexCoord));
+			
 				diffuse *= intensity;
 				specular *= intensity;
-	
-				vec3 result = (ambient + diffuse + specular) * attenuation;
-				color = vec4(result, 1.0f);
+
+				return (ambient + diffuse + specular);
 			}
 		)";
 
@@ -331,17 +406,53 @@ public:
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformInt("material.specular", 1);
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("material.shininess", 32.0f);
 
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.position", m_Camera.GetPosition());
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.direction", m_Camera.GetDirection());
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.cutOff", glm::cos(glm::radians(12.5f)));
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.outerCutOff", glm::cos(glm::radians(17.5f)));
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.ambient", ambientColor);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.diffuse", diffuseColor);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("light.specular", lightColor);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.constant", 1.0f);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.linear", 0.09f);
-		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("light.quadratic", 0.032f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("dirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("dirLight.ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("dirLight.diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("dirLight.specular", lightColor);
 
+		glm::vec3 pointLightPositions[] = {
+			glm::vec3(0.7f,  0.2f,  2.0f),
+			glm::vec3(2.3f, -3.3f, -4.0f),
+			glm::vec3(-4.0f,  2.0f, -12.0f),
+			glm::vec3(0.0f,  0.0f, -3.0f)
+		};
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[0].position", pointLightPositions[0]);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[0].ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[0].diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[0].specular", lightColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[0].constant", 1.0f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[0].linear", 0.09f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[0].quadratic", 0.032f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[1].position", pointLightPositions[1]);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[1].ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[1].diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[1].specular", lightColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[1].constant", 1.0f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[1].linear", 0.09f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[1].quadratic", 0.032f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[2].position", pointLightPositions[2]);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[2].ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[2].diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[2].specular", lightColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[2].constant", 1.0f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[2].linear", 0.09f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[2].quadratic", 0.032f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[3].position", pointLightPositions[3]);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[3].ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[3].diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("pointLights[3].specular", lightColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[3].constant", 1.0f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[3].linear", 0.09f);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("pointLights[3].quadratic", 0.032f);
+
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("spotLight.direction", m_Camera.GetDirection());
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("spotLight.position", m_Camera.GetPosition());
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat("spotLight.outerCutOff", glm::cos(glm::radians(17.5f)));
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("spotLight.ambient", ambientColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("spotLight.diffuse", diffuseColor);
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_CubeShader)->UploadUniformFloat3("spotLight.specular", lightColor);
 
 		m_LightShader->Bind();
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(m_LightShader)->UploadUniformFloat3("u_Color", lightColor);
@@ -359,16 +470,21 @@ public:
 			glm::vec3(-1.3f,  1.0f, -1.5f)
 		};
 
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, lightPos);
-		model = glm::scale(model, glm::vec3(0.2f));
+		
 
 		Hazel::Renderer::BeginScene(m_Camera);
 
 		Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1});
 		Hazel::RenderCommand::Clear(); 
+
+		for (int i = 0; i < 4; i++) {
+
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, pointLightPositions[i]);
+			model = glm::scale(model, glm::vec3(0.2f));
+			Hazel::Renderer::Submit(m_LightShader, m_LightVertexArray, model);
+		}
 		
-		Hazel::Renderer::Submit(m_LightShader, m_LightVertexArray, model);
 
 
 		for (int i = 0; i < 10; i++) {
